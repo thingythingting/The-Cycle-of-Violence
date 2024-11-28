@@ -36,6 +36,7 @@ def onAppStart(app):
     app.gameState = {"trust": 10, "COV": 20, "current_scene": "Intro", "player_choices": []}
     app.scenes = {
         "Intro": IntroScene(),
+        "PrologueScene": PrologueScene(),
         "Level1": Level1Scene(),
         "Level2": Level2Scene(),
         "GameOver": GameOverScene(),
@@ -250,9 +251,29 @@ class IntroScene(Scene):
 
     def handle_input_keys(self, app, key):
         if key == "enter":
-            set_scene(app, "Level1")
+            set_scene(app, "PrologueScene")
 
 # Level 1 Scene
+class PrologueScene(Scene):
+    def __init__(self):
+        super().__init__("PrologueScene")
+    def render(self, app):
+        drawLabel("Prologue", 500, 40, align = 'center', size = 30)
+        drawLabel("In an alternate universe (much like our own) people", 500, 80, align = 'center', size = 20)
+        drawLabel("have gone on rampages of war, violence, and destruction.", 500, 110, align = 'center', size = 20)
+        drawLabel("Desperate to seperate from those norms, your tribe,", 500, 140, align = 'center', size = 20)
+        drawLabel("among many others, sought to move past these", 500, 170, align = 'center', size = 20)
+        drawLabel("violent ideals. Now you must play as a representative", 500, 200, align = 'center', size = 20)
+        drawLabel("for your tribe, aiming to grow your tribe's level of ", 500, 230, align = 'center', size = 20)
+        drawLabel("resources. Aim to prevent the next wars by keeping", 500, 260, align = 'center', size = 20)
+        drawLabel("the 'cycle of violence' meter low and the 'trust'", 500, 290, align = 'center', size = 20)
+        drawLabel("meter high. Because if you don't, the repercussions", 500, 320, align = 'center', size = 20)
+        drawLabel("will be felt for generations to come...", 500, 350, align = 'center', size = 20)
+        drawRect(400, 380, 200, 50, fill = None, borderWidth = 2, border = 'black')
+        drawLabel("Next...", 500, 405, align = 'center', size = 20)
+    def handle_input_mouse_press(self,app, mouseX, mouseY):
+        if mouseX < 600 and mouseX > 400 and mouseY < 430 and mouseY > 380:
+            set_scene(app, "Level1")
 class Level1Scene(Scene):
     def __init__(self):
         super().__init__("Level1")
@@ -260,14 +281,28 @@ class Level1Scene(Scene):
     
     # drawings for level1
     def render(self, app):
-        drawLabel("Level 1", 50,30, size=30, align="center")
-        drawLabel("Press 'Q' to quit or 'N' for next level.", 450,10, size=20, align="left")
-
-        drawLabel(f"AI Action: {app.gameState.get('ai_action', '')}", 300, 50, size=20, align="center")
-        drawLabel(f"Player Action: {app.label}", 150, 100, size=20, align="center")
+        #drawLabel("Level 1", 50,30, size=30, align="center")
+        #drawLabel("Press 'Q' to quit or 'N' for next level.", 450,10, size=20, align="left")
+        drawLabel("First, you be playing with a representative from another tribe. You will ", 500, 30, align = 'center', size = 15)
+        drawLabel("play againt 4 tribes, with each representative having a different", 500, 50, align = 'center', size = 15)
+        drawLabel("playing philosphy. It is up to you to maintain relationships and garner resources ", 500, 70, align = 'center', size = 15)
+        drawLabel("for your tribe. Based on you and your fellow representative's answers, it",500, 90, align = 'center', size = 15)
+        drawLabel("will affect the amount of resources each of you get.", 500, 130, align = "center", size = 15)
+        #drawLabel(f"AI Action: {app.gameState.get('ai_action', '')}", 300, 50, size=20, align="center")
+        #drawLabel(f"Player Action: {app.label}", 150, 100, size=20, align="center")
         drawLabel("Trust",35, 155)
         drawLabel("Resources",95, 155)
         
+
+        drawLine(230, 280, 230,270)
+        drawLine(230,280,238,277)
+        drawLine(230, 280, 239, 265)
+        drawLabel("you", 241, 263, align = 'left')
+
+        drawLine(775, 280, 775, 268)
+        drawLine(775, 280, 768, 273)
+        drawLine(775, 280, 767,260)
+        drawLabel("AI Rep", 768, 253, align = 'right')
         #Navigation tools
         drawRect(app.recttop ,app.rectleft,app.rectwidth, app.rectheight, fill = rgb(30,30,30))
 
@@ -436,6 +471,23 @@ class Revenger:
             return weighted_list[choice_index]
     #     answer = choice(self)    
 
+class Detective:
+    def __init__(self, resources):
+        self.resources = resources
+        self.world_state = {
+            "ai_resources": app.resourcesAI,
+            "player_resources": app.resourcesPlayer
+        }
+        self.goals = [
+            {"name": "Maximize AI Resources", "priority": 1, "target":{"ai_resources":100}}
+        ]
+        self.actions = [
+            {
+                "name": "Attack",
+                "preconditions": {"ai_resources": 15},
+                "effects": {"player_resources":-5}
+            }
+        ]
 runApp()
 
      
